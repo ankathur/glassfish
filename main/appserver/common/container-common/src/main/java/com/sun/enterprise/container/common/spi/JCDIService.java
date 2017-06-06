@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2009-2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -43,10 +43,15 @@ package com.sun.enterprise.container.common.spi;
 
 import com.sun.enterprise.deployment.BundleDescriptor;
 import com.sun.enterprise.deployment.EjbDescriptor;
+import com.sun.enterprise.deployment.EjbInterceptor;
 import org.jvnet.hk2.annotations.Contract;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.InjectionTarget;
+import javax.enterprise.inject.spi.Interceptor;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
+import java.util.Set;
 
 /**
  */
@@ -67,7 +72,19 @@ public interface JCDIService {
 
     public void injectManagedObject(Object managedObject, BundleDescriptor bundle);
 
-    public <T> T createInterceptorInstance(Class<T> interceptorClass, BundleDescriptor bundle);
+    /**
+     * Create an inteceptor instance for an ejb.
+     * @param interceptorClass The interceptor class.
+     * @param bundle The ejb bundle.
+     * @param ejbContext The ejb context.
+     * @param ejbInterceptors All of the ejb interceptors for the ejb.
+     *
+     * @return The interceptor instance.
+     */
+    <T> T createInterceptorInstance( Class<T> interceptorClass,
+                                     BundleDescriptor bundle,
+                                     JCDIService.JCDIInjectionContext ejbContext,
+                                     Set<EjbInterceptor> ejbInterceptors );
 
     public <T> JCDIInjectionContext<T> createJCDIInjectionContext(EjbDescriptor ejbDesc);
     public <T> JCDIInjectionContext<T> createJCDIInjectionContext(EjbDescriptor ejbDesc, T instance);
@@ -77,6 +94,24 @@ public interface JCDIService {
     public interface JCDIInjectionContext<T> {
         public T getInstance();
         public void cleanup(boolean callPreDestroy);
+
+        /**
+         * @return The injection target.
+         */
+        InjectionTarget<T> getInjectionTarget();
+
+        /**
+         * @return The creational context.
+         */
+        CreationalContext<T> getCreationalContext();
+
+        /**
+         * Add a dependent context to this context so that the dependent
+         * context can be cleaned up when this one is.
+         *
+         * @param dependentContext The dependenct context.
+         */
+        void addDependentContext( JCDIInjectionContext dependentContext );
     }
 
 }

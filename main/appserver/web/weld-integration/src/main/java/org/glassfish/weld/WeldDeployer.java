@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2009-2015 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -68,6 +68,7 @@ import org.glassfish.internal.data.ApplicationInfo;
 import org.glassfish.internal.data.ApplicationRegistry;
 import org.glassfish.javaee.core.deployment.ApplicationHolder;
 import org.glassfish.web.deployment.descriptor.AppListenerDescriptorImpl;
+import org.glassfish.weld.connector.WeldUtils;
 import org.glassfish.weld.services.*;
 import org.glassfish.weld.util.Util;
 import org.jboss.weld.bootstrap.WeldBootstrap;
@@ -75,6 +76,8 @@ import org.jboss.weld.bootstrap.api.Environments;
 import org.jboss.weld.bootstrap.spi.BeanDeploymentArchive;
 import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
 import org.jboss.weld.bootstrap.spi.BootstrapConfiguration;
+import org.jboss.weld.bootstrap.spi.EEModuleDescriptor;
+import org.jboss.weld.bootstrap.spi.helpers.EEModuleDescriptorImpl;
 import org.jboss.weld.ejb.spi.EjbServices;
 import org.jboss.weld.injection.spi.InjectionServices;
 import org.jboss.weld.security.spi.SecurityServices;
@@ -545,12 +548,17 @@ public class WeldDeployer extends SimpleDeployer<WeldContainer, WeldApplicationC
                     InjectionManager injectionMgr = services.getService(InjectionManager.class);
                     InjectionServices injectionServices = new InjectionServicesImpl(injectionMgr, bundle, deploymentImpl);
 
-                    if (logger.isLoggable(Level.FINE)) {
+
+                     if (logger.isLoggable(Level.FINE)) {
                         logger.log(Level.FINE,
                                    CDILoggerInfo.ADDING_INJECTION_SERVICES,
                                    new Object [] {injectionServices, bda.getId()});
                     }
                     bda.getServices().add(InjectionServices.class, injectionServices);
+                    EEModuleDescriptor eeModuleDescriptor = getEEModuleDescriptor( bda );
+                    if ( eeModuleDescriptor != null ) {
+                        bda.getServices().add(EEModuleDescriptor.class, eeModuleDescriptor);
+                    }
 
                     //Relevant in WAR BDA - WEB-INF/lib BDA scenarios
                     for(BeanDeploymentArchive subBda: bda.getBeanDeploymentArchives()){
@@ -560,6 +568,10 @@ public class WeldDeployer extends SimpleDeployer<WeldContainer, WeldApplicationC
                                        new Object [] {injectionServices, subBda.getId()});
                         }
                         subBda.getServices().add(InjectionServices.class, injectionServices);
+                        eeModuleDescriptor = getEEModuleDescriptor( bda );
+                        if ( eeModuleDescriptor != null ) {
+                            bda.getServices().add(EEModuleDescriptor.class, eeModuleDescriptor);
+                        }
                     }
                 }
 
@@ -576,6 +588,22 @@ public class WeldDeployer extends SimpleDeployer<WeldContainer, WeldApplicationC
         appInfo.addTransientAppMetaData(WELD_DEPLOYMENT, deploymentImpl);
 
         return wbApp;
+    }
+
+    private EEModuleDescriptor getEEModuleDescriptor( BeanDeploymentArchive beanDeploymentArchive ) {
+        EEModuleDescriptor eeModuleDescriptor = null;
+        if ( beanDeploymentArchive instanceof BeanDeploymentArchiveImpl ) {
+            WeldUtils.BDAType bdaType = ( ( BeanDeploymentArchiveImpl ) beanDeploymentArchive ).getBDAType();
+            if ( bdaType.equals ( WeldUtils.BDAType.JAR ) ) {
+                eeModuleDescriptor = new EEModuleDescriptorImpl( beanDeploymentArchive.getId(), EEModuleDescriptor.ModuleType.EJB_JAR );
+            } else if ( bdaType.equals ( WeldUtils.BDAType.WAR ) ) {
+                eeModuleDescriptor = new EEModuleDescriptorImpl( beanDeploymentArchive.getId(), EEModuleDescriptor.ModuleType.WEB );
+            } else if ( bdaType.equals ( WeldUtils.BDAType.RAR ) ) {
+                eeModuleDescriptor = new EEModuleDescriptorImpl( beanDeploymentArchive.getId(), EEModuleDescriptor.ModuleType.CONNECTOR );
+            }
+        }
+
+        return eeModuleDescriptor;
     }
 
     private void addWeldListenerToAllWars(DeploymentContext context) {

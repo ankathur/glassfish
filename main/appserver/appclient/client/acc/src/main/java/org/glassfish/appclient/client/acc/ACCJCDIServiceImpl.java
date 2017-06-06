@@ -1,19 +1,19 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2013 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013-2017 Oracle and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
  * and Distribution License("CDDL") (collectively, the "License").  You
  * may not use this file except in compliance with the License.  You can
  * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
+ * https://oss.oracle.com/licenses/CDDL+GPL-1.1
+ * or LICENSE.txt.  See the License for the specific
  * language governing permissions and limitations under the License.
  *
  * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
+ * file and include the License file at LICENSE.txt.
  *
  * GPL Classpath Exception:
  * Oracle designates this particular file as subject to the "Classpath"
@@ -37,6 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
+
 package org.glassfish.appclient.client.acc;
 
 import com.sun.enterprise.container.common.spi.InterceptorInvoker;
@@ -45,6 +46,7 @@ import com.sun.enterprise.container.common.spi.JavaEEInterceptorBuilder;
 import com.sun.enterprise.container.common.spi.util.InjectionManager;
 import com.sun.enterprise.deployment.BundleDescriptor;
 import com.sun.enterprise.deployment.EjbDescriptor;
+import com.sun.enterprise.deployment.EjbInterceptor;
 import com.sun.enterprise.deployment.ManagedBeanDescriptor;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -58,6 +60,7 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:phil.zampino@oracle.com">Phil Zampino</a>
@@ -187,8 +190,10 @@ public class ACCJCDIServiceImpl implements JCDIService {
 
 
     @Override
-    public <T> T createInterceptorInstance(Class<T> interceptorClass, BundleDescriptor bundle) {
-
+    public <T> T createInterceptorInstance(Class<T> interceptorClass,
+                                    BundleDescriptor bundle,
+                                    JCDIService.JCDIInjectionContext ejbContext,
+                                           Set<EjbInterceptor> ejbInterceptors ) {
         T interceptorInstance = null;
 
         WeldContainer wc = getWeldContainer();
@@ -269,6 +274,20 @@ public class ACCJCDIServiceImpl implements JCDIService {
 
             it.dispose(instance);
             cc.release();
+        }
+
+        @Override
+        public InjectionTarget getInjectionTarget() {
+            return it;
+        }
+
+        @Override
+        public CreationalContext getCreationalContext() {
+            return cc;
+        }
+
+        public void addDependentContext( JCDIInjectionContext dependentContext ) {
+            // nothing for now
         }
     }
 
