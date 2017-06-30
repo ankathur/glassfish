@@ -54,7 +54,6 @@ import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
-import javax.interceptor.AroundConstruct;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -181,12 +180,6 @@ public class EjbServicesImpl implements EjbServices {
         // EjbDescriptor.   299 interceptors are always added after any interceptors defined via
         // EJB-defined metadata, so the ordering will be correct since all the ejb interceptors
         // have already been processed.
-	List<EjbInterceptor> aroundConstructChain =
-                makeInterceptorChain(InterceptionType.AROUND_CONSTRUCT,
-                        interceptorBindings.getLifecycleInterceptors(InterceptionType.AROUND_CONSTRUCT),
-                                glassfishEjbDesc);
-        glassfishEjbDesc.appendToInterceptorChain(aroundConstructChain);
-
         List<EjbInterceptor> postConstructChain =
                 makeInterceptorChain(InterceptionType.POST_CONSTRUCT,
                         interceptorBindings.getLifecycleInterceptors(InterceptionType.POST_CONSTRUCT),
@@ -233,7 +226,9 @@ public class EjbServicesImpl implements EjbServices {
                                          interceptorBindings.getMethodInterceptors(InterceptionType.AROUND_INVOKE, m),
                                          glassfishEjbDesc);
                   glassfishEjbDesc.addMethodLevelChain(aroundInvokeChain, m, true);
-		   List<EjbInterceptor> aroundTimeoutChain =
+
+
+                  List<EjbInterceptor> aroundTimeoutChain =
                     makeInterceptorChain(InterceptionType.AROUND_TIMEOUT,
                                          interceptorBindings.getMethodInterceptors(InterceptionType.AROUND_TIMEOUT, m),
                                          glassfishEjbDesc);
@@ -308,9 +303,6 @@ public class EjbServicesImpl implements EjbServices {
                         case AROUND_TIMEOUT :
                             ejbInt.addAroundTimeoutDescriptor(lifecycleDesc);
                             break;
-			case AROUND_CONSTRUCT :
-                            ejbInt.addAroundConstructDescriptor(lifecycleDesc);
-                            break; 
                         default :
                             throw new IllegalArgumentException("Invalid lifecycle interception type " +
                                                                interceptionType);
@@ -329,8 +321,6 @@ public class EjbServicesImpl implements EjbServices {
     private Class<?> getInterceptorAnnotationType(InterceptionType interceptionType) {
 
         switch(interceptionType) {
-	     case AROUND_CONSTRUCT :
-                return AroundConstruct.class;
             case POST_CONSTRUCT :
                 return PostConstruct.class;
             case PRE_DESTROY :
@@ -343,7 +333,6 @@ public class EjbServicesImpl implements EjbServices {
                 return AroundInvoke.class;
             case AROUND_TIMEOUT :
                 return AroundTimeout.class;
-	   
         }
 
         throw new IllegalArgumentException("Invalid interception type " +

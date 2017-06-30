@@ -820,8 +820,7 @@ public final class MessageBeanContainer extends BaseContainer implements
             context.setContextCalled();
 
             // Call ejbCreate OR @PostConstruct on the bean.
-	      intercept(CallbackType.AROUND_CONSTRUCT, context);
-           intercept(CallbackType.POST_CONSTRUCT, context);
+            intercept(CallbackType.POST_CONSTRUCT, context);
 
             ejbProbeNotifier.ejbBeanCreatedEvent(getContainerId(),
                                 containerInfo.appName, containerInfo.modName,
