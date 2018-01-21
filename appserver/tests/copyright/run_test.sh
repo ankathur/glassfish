@@ -41,7 +41,7 @@
 
 
 copyright_run(){
-  M2_HOME=/net/gf-hudson/scratch/gf-hudson/export2/hudson/tools/apache-maven-3.0.3
+  #M2_HOME=/net/gf-hudson/scratch/gf-hudson/export2/hudson/tools/apache-maven-3.0.3
   MAVEN_OPTS="-Xmx512m -Xms256m -XX:MaxPermSize=512m"; export MAVEN_OPTS
   MAVEN_REPO=$WORKSPACE/repository
   MAVEN_SETTINGS=$M2_HOME/settings-nexus.xml

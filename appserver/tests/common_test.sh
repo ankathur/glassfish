@@ -74,7 +74,7 @@ test_init(){
 	ANT_HOME=/net/gf-hudson/scratch/gf-hudson/export2/hudson/tools/ant-1.7.1; export ANT_HOME
 	APS_HOME=$WORKSPACE/main/appserver/tests/appserv-tests; export APS_HOME
 	TEST_RUN_LOG=tests-run.log; export TEST_RUN_LOG
-  export M2_HOME=$MAVEN_3_0_3
+  #export M2_HOME=$MAVEN_3_0_3
         #workaround for OSGI timestamp issue
         find $S1AS_HOME -type f | xargs touch > /dev/null
 	echo S1AS_HOME is $S1AS_HOME
@@ -90,8 +90,8 @@ test_init(){
 
 ql_init(){
 	printf "\n%s \n\n" "===== QUICK LOOK INIT ====="
-	export M2_HOME=$MAVEN_3_0_3
-	export PATH=$MAVEN_3_0_3/bin:$JAVA_HOME/bin:/usr/bin:/usr/local/bin:/usr/home/java_re/bin:$PATH
+	#export M2_HOME=$MAVEN_3_0_3
+	export PATH=$M2_HOME/bin:$JAVA_HOME/bin:/usr/bin:/usr/local/bin:/usr/home/java_re/bin:$PATH
 	TEST_RUN_LOG=tests-run.log; export TEST_RUN_LOG
 	java -version
 	mvn -version
