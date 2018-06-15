@@ -131,6 +131,11 @@
             <artifactId>hk2-core</artifactId>
             <version>${hk2.version}</version>
         </dependency>
+		<dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>tiger-types</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
