@@ -113,7 +113,7 @@
     </dependency>
     <dependency>
         <groupId>org.glassfish.hk2.external</groupId>
-        <artifactId>asm-all-repackaged</artifactId>
+        <artifactId>asm-repackaged</artifactId>
         <version>${hk2.version}</version>
         <optional>true</optional>
     </dependency>
@@ -129,9 +129,9 @@
         <optional>true</optional>
     </dependency>
     <dependency>
-        <groupId>org.glassfish.hk2</groupId>
+        <groupId>net.java</groupId>
         <artifactId>osgi-resource-locator</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2-SNAPSHOT</version>
         <optional>true</optional>
     </dependency>
     <dependency>

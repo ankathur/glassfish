@@ -186,7 +186,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.hk2</groupId>
+            <groupId>net.java</groupId>
             <artifactId>osgi-resource-locator</artifactId>
             <exclusions>
                 <exclusion>

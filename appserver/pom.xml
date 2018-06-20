@@ -852,9 +852,9 @@
                 <version>2.0-20081121</version>
             </dependency>
             <dependency>
-                <groupId>org.glassfish.hk2</groupId>
+                <groupId>net.java</groupId>
                 <artifactId>osgi-resource-locator</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.fighterfish</groupId>
