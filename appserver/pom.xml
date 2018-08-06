@@ -135,11 +135,11 @@
     </properties>
 
     <modules>
-	
+
         <module>common</module>
         <module>libpam4j</module>
 	<module>jaxr-ra</module>
-	<module>ldapbp</module> 
+	<module>ldapbp</module>
         <module>ha</module>
         <module>deployment</module>
         <module>admin</module>
@@ -860,7 +860,7 @@
             <dependency>
                 <groupId>org.glassfish.hk2</groupId>
                 <artifactId>osgi-resource-locator</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.fighterfish</groupId>
