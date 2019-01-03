@@ -110,7 +110,7 @@ test_run_cts_smoke(){
 	mv ts.jte.new ts.jte
 	# End temp fix for javamail password
 	cd $TS_HOME/bin/xml
-        
+
 	# SECURITY MANAGER ON
 	$S1AS_HOME/bin/asadmin start-domain
 	$S1AS_HOME/bin/asadmin create-jvm-options "-Djava.security.manager"
@@ -155,7 +155,7 @@ test_run_servlet_tck(){
 			do
 				if [[ (-d $TESTDIR/$i)  && ( $i != "jsp" &&  $i != "common" && $i != "signaturetest") ]]; then
 					if [[ -z $(grep $i `dirname $0`/test_dir.properties) ]]; then
-						echo "A new folder $i is added in the test source which has no entry in the properties file" 
+						echo "A new folder $i is added in the test source which has no entry in the properties file"
 						exit 1
 					fi
 				fi
@@ -190,11 +190,11 @@ test_run_servlet_tck(){
 
 	cd $S1AS_HOME
 	bin/asadmin start-domain
-
+  mkdir $S1AS_HOME/databases
 	cd $TS_HOME/bin
 	ant config.security
 	ant deploy.all
-	
+
 	if [ -n $1 ]; then
 		cd $TS_HOME/src/com/sun/ts/tests/$1
 	else
@@ -278,7 +278,7 @@ cts_to_junit(){
 		classname=`echo $id | cut -d '#' -f1 | ${SED} s@"\/"@"_"@g | ${SED} s@".java"@@g`
 		name=`echo $id | cut -d '#' -f2`
 
-		echo "		<testcase classname=\"${junitCategory}.$classname\" name=\"$name\">" >> $2		
+		echo "		<testcase classname=\"${junitCategory}.$classname\" name=\"$name\">" >> $2
 		if [ "${status}" = "FAILED" ]
 		then
 			echo "			<failure type=\"CtsFailure\"> n/a </failure>" >> $2
@@ -296,7 +296,7 @@ delete_workspace(){
     rm $WORKSPACE/servlettck.zip > /dev/null || true
     rm -rf $WORKSPACE/javaee-smoke > /dev/null || true
     rm $WORKSPACE/javaee-smoke-7.0_latest.zip > /dev/null || true
-} 
+}
 
 OPT=$1
 TEST_ID=$2

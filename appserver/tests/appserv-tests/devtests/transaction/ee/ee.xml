@@ -54,7 +54,7 @@
     <echo message="${ASADMIN}"/>
     <mkdir dir="${env.S1AS_HOME}/databases"/>
     <!-- spawn is added to prevent a hang on Windows -->
-    <exec  executable="${ASADMIN}" failonerror="true">
+    <exec  spawn="true" executable="${ASADMIN}" failonerror="false">
       <arg line="start-database"/>
       <arg line="--dbhome"/>
       <arg line="${env.S1AS_HOME}/databases"/>
