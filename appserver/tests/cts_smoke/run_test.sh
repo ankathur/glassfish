@@ -110,7 +110,7 @@ test_run_cts_smoke(){
 	mv ts.jte.new ts.jte
 	# End temp fix for javamail password
 	cd $TS_HOME/bin/xml
-
+  mkdir $S1AS_HOME/databases    
 	# SECURITY MANAGER ON
 	$S1AS_HOME/bin/asadmin start-domain
 	$S1AS_HOME/bin/asadmin create-jvm-options "-Djava.security.manager"
@@ -190,7 +190,7 @@ test_run_servlet_tck(){
 
 	cd $S1AS_HOME
 	bin/asadmin start-domain
-  mkdir $S1AS_HOME/databases
+
 	cd $TS_HOME/bin
 	ant config.security
 	ant deploy.all
