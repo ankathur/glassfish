@@ -148,5 +148,4 @@ grant  codeBase "file:${com.sun.aas.instanceRoot}/applications/-"{
 grant {
      permission org.apache.derby.security.SystemPermission "engine", "usederbyinternals";
      permission java.io.FilePermission       "<<ALL FILES>>", "write,read";
-     permission java.security.AllPermission;
 };
